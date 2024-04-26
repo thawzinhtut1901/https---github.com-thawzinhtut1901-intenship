@@ -24,27 +24,28 @@ const AdminDashboard = () => {
     };
   }, [unSaved]);  
 
-  const handlePercentageChange = (index: number, newPercentage: number | null) => {
-    if (newPercentage !== null) {
+  const handlePercentageChange = (index: number, newValue: string) => {
+    if (/^\d*$/.test(newValue)) {
+      const newPercentage = newValue === '' ? 0 : parseInt(newValue);
       if (newPercentage >= 0) {
         const totalCollaboratorPercentage = collaborators.reduce((acc, curr) => acc + curr.percentage, 0);
         const remainingPercentage = 100 - totalCollaboratorPercentage;
-  
+    
         if (newPercentage <= remainingPercentage) {
           const newCollaborators = [...collaborators];
           newCollaborators[index].percentage = newPercentage;
           setCollaborators(newCollaborators);
+    
   
-          // Update owner's percentage
           const updatedOwnerPercentage = 100 - newCollaborators.reduce((acc, curr) => acc + curr.percentage, 0);
           setOwnerPercentage(updatedOwnerPercentage);
           setUnSaved(true);
         } else {
-          // Handle error - not enough remaining percentage for allocation
+         
           alert('Not enough remaining percentage for allocation.');
         }
       } else {
-        // Handle error - input value less than zero
+        
         alert('Input value cannot be less than zero.');
       }
     }
@@ -57,13 +58,13 @@ const AdminDashboard = () => {
 
   const removeCollaborator = (id:number) => {
     const collaboratorToRemove = collaborators.find(collaborator => collaborator.id === id);
-    // setCollaborators(collaborators.filter(collaborator => collaborator.id !== id));
+   
     if (collaboratorToRemove) {
-      // Add the collaborator's percentage to the owner's percentage
+      
       const updatedOwnerPercentage = ownerPercentage + collaboratorToRemove.percentage;
       setOwnerPercentage(updatedOwnerPercentage);
   
-      // Remove the collaborator from the collaborators list
+      
       const newCollaborators = collaborators.filter(collaborator => collaborator.id !== id);
       setCollaborators(newCollaborators);
     }
@@ -95,11 +96,11 @@ const AdminDashboard = () => {
                 
                 <input
                   className="border-2 ml-3 border-solid border-slate-400 bg-yellow-200 rounded-md py-2 px-3 pr-10 focus:outline-none focus:border-blue-500"
-                  type="number"
-                  value={collaborator.percentage!== 0 ? collaborator.percentage : ''}
-                  onChange={(e) => handlePercentageChange(index, parseInt(e.target.value))}
+                  type="text" 
+                  value={collaborator.percentage !== 0 ? collaborator.percentage : ''}
+                  onChange={(e) => handlePercentageChange(index, e.target.value)}
                   disabled={isSaved} 
-            />
+                />
               
                 <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded focus:outline-none text-lg" onClick={() => removeCollaborator(collaborator.id)}>Remove</button>
               </>
