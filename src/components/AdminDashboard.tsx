@@ -8,6 +8,7 @@ const AdminDashboard = () => {
   ]);
 
   const [unSaved, setUnSaved] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
     const handleBeforeUnsaved = (event:any) => {
@@ -46,8 +47,18 @@ const AdminDashboard = () => {
     setCollaborators([...collaborators, {id: Date.now(), name: newCollaboratorName, percentage: 0, editMode: false }]);
   };
 
-  const removeCollaborator = (id:any) => {
-    setCollaborators(collaborators.filter(collaborator => collaborator.id !== id));
+  const removeCollaborator = (id:number) => {
+    const collaboratorToRemove = collaborators.find(collaborator => collaborator.id === id);
+    // setCollaborators(collaborators.filter(collaborator => collaborator.id !== id));
+    if (collaboratorToRemove) {
+      // Add the collaborator's percentage to the owner's percentage
+      const updatedOwnerPercentage = ownerPercentage + collaboratorToRemove.percentage;
+      setOwnerPercentage(updatedOwnerPercentage);
+  
+      // Remove the collaborator from the collaborators list
+      const newCollaborators = collaborators.filter(collaborator => collaborator.id !== id);
+      setCollaborators(newCollaborators);
+    }
   };
 
   const toggleEditMode = (index:any) => {
@@ -59,6 +70,7 @@ const AdminDashboard = () => {
   const handleSave = () => {
     alert('Changes saved!');
     setUnSaved(false);
+    setIsSaved(true);
   }
   return (
     <div className='bg-yellow-200 min-h-screen min-w-screen flex flex-col items-center justify-center'>
@@ -80,8 +92,9 @@ const AdminDashboard = () => {
                 <input
                   className="border-2 ml-3 border-solid border-slate-400 bg-yellow-200 rounded-md py-2 px-3 pr-10 focus:outline-none focus:border-blue-500"
                   type="number"
-                  value={collaborator.percentage}
+                  {collaborator.percentage!== 0 ? collaborator.percentage : ''}
                   onChange={(e) => handlePercentageChange(index, parseInt(e.target.value))}
+                  disabled={isSaved} 
                 />
                 <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded focus:outline-none text-lg" onClick={() => toggleEditMode(index)}>Done</button>
               </>
