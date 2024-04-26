@@ -24,21 +24,29 @@ const AdminDashboard = () => {
     };
   }, [unSaved]);  
 
-  const handlePercentageChange = (index:any, newPercentage:any) => {
-    const totalCollaboratorPercentage = collaborators.reduce((acc, curr) => acc + curr.percentage, 0);
-    const remainingPercentage = 100 - totalCollaboratorPercentage;
-
-    if (newPercentage <= remainingPercentage) {
-      const newCollaborators = [...collaborators];
-      newCollaborators[index].percentage = newPercentage;
-      setCollaborators(newCollaborators);
-
-      // Update owner's percentage
-      setOwnerPercentage(100 - newCollaborators.reduce((acc, curr) => acc + curr.percentage, 0));
-      setUnSaved(true);
-    } else {
-      // Handle error - not enough remaining percentage for allocation
-      alert('Not enough remaining percentage for allocation.');
+  const handlePercentageChange = (index: number, newPercentage: number | null) => {
+    if (newPercentage !== null) {
+      if (newPercentage >= 0) {
+        const totalCollaboratorPercentage = collaborators.reduce((acc, curr) => acc + curr.percentage, 0);
+        const remainingPercentage = 100 - totalCollaboratorPercentage;
+  
+        if (newPercentage <= remainingPercentage) {
+          const newCollaborators = [...collaborators];
+          newCollaborators[index].percentage = newPercentage;
+          setCollaborators(newCollaborators);
+  
+          // Update owner's percentage
+          const updatedOwnerPercentage = 100 - newCollaborators.reduce((acc, curr) => acc + curr.percentage, 0);
+          setOwnerPercentage(updatedOwnerPercentage);
+          setUnSaved(true);
+        } else {
+          // Handle error - not enough remaining percentage for allocation
+          alert('Not enough remaining percentage for allocation.');
+        }
+      } else {
+        // Handle error - input value less than zero
+        alert('Input value cannot be less than zero.');
+      }
     }
   };
 
