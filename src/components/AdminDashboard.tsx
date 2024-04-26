@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 const AdminDashboard = () => {
   const [ownerPercentage, setOwnerPercentage] = useState(100);
   const [collaborators, setCollaborators] = useState([
-    {id: 1, name: `Collaborator: ${1}`, percentage: 0, editMode: false },
-    {id: 2, name: `Collaborator: ${2}`, percentage: 0, editMode: false },
+    {id: 1, name: `Collaborator: ${1}`, percentage: 0 },
+    {id: 2, name: `Collaborator: ${2}`, percentage: 0 },
   ]);
 
   const [unSaved, setUnSaved] = useState(false);
@@ -44,7 +44,7 @@ const AdminDashboard = () => {
 
   const handleAddCollaborator = () => {
     const newCollaboratorName = `Collaborator: ${collaborators.length + 1}`;
-    setCollaborators([...collaborators, {id: Date.now(), name: newCollaboratorName, percentage: 0, editMode: false }]);
+    setCollaborators([...collaborators, {id: Date.now(), name: newCollaboratorName, percentage: 0 }]);
   };
 
   const removeCollaborator = (id:number) => {
@@ -59,12 +59,6 @@ const AdminDashboard = () => {
       const newCollaborators = collaborators.filter(collaborator => collaborator.id !== id);
       setCollaborators(newCollaborators);
     }
-  };
-
-  const toggleEditMode = (index:any) => {
-    const newCollaborators = [...collaborators];
-    newCollaborators[index].editMode = !newCollaborators[index].editMode;
-    setCollaborators(newCollaborators);
   };
 
   const handleSave = () => {
@@ -87,30 +81,21 @@ const AdminDashboard = () => {
         
         {collaborators.map((collaborator, index) => (
           <div key={index} className="flex items-center space-x-3 mb-3">
-            {collaborator.editMode ? (
+            
               <>
+                <p className="text-lg">{collaborator.name}</p>
+                
                 <input
                   className="border-2 ml-3 border-solid border-slate-400 bg-yellow-200 rounded-md py-2 px-3 pr-10 focus:outline-none focus:border-blue-500"
                   type="number"
-                  {collaborator.percentage!== 0 ? collaborator.percentage : ''}
+                  value={collaborator.percentage!== 0 ? collaborator.percentage : ''}
                   onChange={(e) => handlePercentageChange(index, parseInt(e.target.value))}
                   disabled={isSaved} 
-                />
-                <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded focus:outline-none text-lg" onClick={() => toggleEditMode(index)}>Done</button>
-              </>
-            ) : (
-              <>
-                <p className="text-lg">{collaborator.name}</p>
-                <input
-              className="border-2 ml-3 border-solid border-slate-400 bg-yellow-200 rounded-md py-2 px-3 pr-10 focus:outline-none focus:border-blue-500"
-              type="number"
-              value={collaborator.percentage}
-              onChange={(e) => handlePercentageChange(index, parseInt(e.target.value))}
             />
-                <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded focus:outline-none text-lg" onClick={() => toggleEditMode(index)}>Edit</button>
+              
                 <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded focus:outline-none text-lg" onClick={() => removeCollaborator(collaborator.id)}>Remove</button>
               </>
-            )}
+      
           </div>
         ))}
       </div>
