@@ -12,9 +12,10 @@ const Form = ({ onSubmit, formName, formPercentage }:any) => {
   };
 
   return (
-    <div className='flex flex-col mt-[340px] bg-sky-100'>
-      <form onSubmit={handleSubmit} className='flex flex-col my-6 justify-center items-center'>
-      <label className='flex m-4 text-lg'>
+    <div className='flex m-32 bg-slate-400 flex-col w-5/12 border-none rounded-lg justify-center items-center'>
+      <h1 className='font-bold text-black flex text-xl mt-3'>Add New Collabarator</h1>
+      <form onSubmit={handleSubmit} className='flex flex-col my-6 justify-start items-start'>
+      <label className='flex m-4 text-lg text-black'>
         Name:
         <input
           type="text"
@@ -25,7 +26,7 @@ const Form = ({ onSubmit, formName, formPercentage }:any) => {
         />
       </label>
 
-      <label className='flex m-4 text-lg'>
+      <label className='flex m-4 text-lg text-black'>
         Percentage:
         <input
           type="number"
@@ -35,7 +36,7 @@ const Form = ({ onSubmit, formName, formPercentage }:any) => {
           className='ml-1 border-black border-none bg-slate-300 text-black rounded-md'
         />
       </label>
-      <button className='text-lg bg-slate-400 text-black flex p-2 rounded-lg' type="submit">Add Collaborator</button>
+      <button className='text-lg bg-blue-500 text-white flex ml-[150px] p-3 rounded-lg' type="submit">Add</button>
     </form>
     </div>
     
@@ -71,6 +72,7 @@ const AdminDashboard = () => {
         }
 
   const handleAddCollaborator = (newCollaborator: any) => {
+    // Ensure the collaborator's percentage is non-negative
     if (newCollaborator.percentage < 0) {
       alert('Collaborator percentage cannot be negative.');
       return;
@@ -78,19 +80,24 @@ const AdminDashboard = () => {
   
     const totalCollaboratorPercentage = collaborators.reduce((acc, curr) => acc + curr.percentage, 0);
   
+    // Calculate the sum of the current collaborators' percentages and the new collaborator's percentage
     const totalPercentageWithNewCollaborator = totalCollaboratorPercentage + newCollaborator.percentage;
   
+    // Ensure the total percentage does not exceed 100%
     if (totalPercentageWithNewCollaborator > 100) {
       alert('Cannot add collaborator. Total percentage exceeds 100%.');
       return;
     }
   
+    // Update collaborators array with the new collaborator
     const newCollaborators = [...collaborators, { ...newCollaborator }];
     setCollaborators(newCollaborators);
   
+    // Calculate the owner's percentage
     const updatedOwnerPercentage = 100 - totalPercentageWithNewCollaborator;
     setOwnerPercentage(updatedOwnerPercentage);
   
+    // Update form fields with new collaborator values
     setFormName(newCollaborator.name);
     setFormPercentage(newCollaborator.percentage.toString());
   };
@@ -104,6 +111,7 @@ const AdminDashboard = () => {
     setCollaborators(updatedCollaborators);
     setOwnerPercentage(updatedOwnerPercentage);
 
+    // If the deleted collaborator was being edited, clear the form fields
     if (deletedCollaborator.name === formName) {
       setFormName('');
       setFormPercentage('');
@@ -112,21 +120,21 @@ const AdminDashboard = () => {
 
 
   return (
-    <div>
-      <h1 className='flex flex-col items-center justify-center text-4xl border-b p-4 bg-slate-950 text-white'>Admin DashBoard</h1>
+    <div className='text-white'>
+      <h1 className='flex flex-col items-center justify-center text-3xl border-b p-4 bg-slate-950 text-white'>Admin DashBoard</h1>
     <div className='flex my-10 border-b items-center justify-between mx-32'>
-      <h2 className='text-2xl mb-2'>Thaw Zin Htut <span className="flex-1 m-1 absolute rounded bg-blue-600 text-sm font-thin text-white">Owner</span></h2>
-      <p className='text-2xl mb-2'>Percentage: <span>{ownerPercentage}%</span></p>
+      <h2 className='text-xl mb-2'>Thaw Zin Htut <span className="flex-1 m-1 absolute rounded bg-blue-600 text-sm font-thin text-white">Owner</span></h2>
+      <p className='text-xl mb-2'>Percentage: <span>{ownerPercentage}%</span></p>
     </div>
 
     <div>
       {collaborators.map((collaborator, index) => (
         <div key={index} className='flex my-4 border-b items-center justify-between mx-32'>
-          <h3 className='text-2xl mb-2'>{collaborator.name} <span className='flex-1 m-1 absolute rounded bg-red-600 text-sm font-thin text-white'>New</span></h3>
+          <h3 className='text-xl mb-2'>{collaborator.name} <span className='flex-1 m-1 absolute rounded bg-red-600 text-sm font-thin text-white'>New</span></h3>
           
 
           <div>
-            <p className='text-2xl mb-2'>Percentage: <span>{collaborator.percentage}%</span></p>
+            <p className='text-xl mb-2'>Percentage: <span>{collaborator.percentage}%</span></p>
             <button className='bg-red-400 rounded ml-32 text-white p-1' onClick={() => handleDeleteCollaborator(index)}>Delete</button>   
           </div>
           
